@@ -12,8 +12,16 @@ Thermos - Welcome
                 <p>Thermos is the simple bookmarking application</p>
             </header>
             <section>
-                <h2>Title: {{ title }}</h2>
-                <p>Text: {{ user.initials() }} </p>
+                <h2>Recently Added</h2>
+                {% if new_bookmarks %}
+                <ul>
+                    {% for bm in new_bookmarks %}
+                    <li>{{ bm.user }} added <a href="{{ bm.url }}">{{ bm.url }}</a> </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                    No bookmark yet.
+                {% endif %}
             </section>
             <section>
                 <h2>article section h2</h2>

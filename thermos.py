@@ -11,10 +11,12 @@ app.logger.setLevel(DEBUG)
 bookmarks = []
 app.config['SECRET_KEY'] = "\xde:~\xf7\xdd\n%\x8f\x86\xec\xdc8\x9f\xa0\xc0\x9c\x83,\x8ee\x90' \x8d"
 
+from forms import BookmarkForm
 
-def store_bookmark(url):
+def store_bookmark(url, description):
     bookmarks.append(dict(
         url=url,
+        description=description,
         user='reindert',
         date=datetime.utcnow()
     ))
@@ -34,19 +36,21 @@ class User(object):
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html', title='values passed from program', user=User("Dhanaskekaran", "Anbalagan"))
+    return render_template('index.html', new_bookmarks=new_bookmark(5))
 
 
 @app.route('/add', methods=['GET', 'POST'])
 def add():
-    if request.method == 'POST':
-        url = request.form['url']
-        store_bookmark(url)
+    form = BookmarkForm()
+    if form.validate_on_submit():
+        url = form.url.data
+        description = form.description.data
+        store_bookmark(url, description)
         # app.logger.debug('stored_url: ' + url)
-        flash("store_bookmark '{}'".format(url))
+        flash("store_bookmark '{}'".format(description))
         return redirect(url_for('index'))
 
-    return render_template('add.html')
+    return render_template('add.html', form=form)
 
 
 @app.errorhandler(404)
